@@ -4,6 +4,7 @@ var Dash = React.createClass({
 			rpm: 0,
 			mph: 0,
 			coolantTemp: 0,
+			opts: [],
 			dash: "defaultDash",
 			drawer: false
 		};
@@ -35,13 +36,15 @@ var Dash = React.createClass({
 			<div style={tickStyle} className={divClass}></div>
 			);
 	},
-	backgroundMarkers: function () {
-		var rpmMarkers = []
-		for (var i = 0; i < 75; i++) {
-			rpmMarkers.push(this.rpmMarker(i, true));
-		}
-		return rpmMarkers;
+	renderGauge: function() {
+		return (
+			<div id="gauge1">
+				<canvas width="380" height="380" id="canvas1"></canvas>
+				<div id="preview-textfield"></div>
+			</div>
+		);
 	},
+
 	rpmMarkers: function () {
 		var percentRPM = this.state.rpm / 120;
 		var rpmMarkers = []
@@ -56,59 +59,19 @@ var Dash = React.createClass({
 	},
 	renderMPH: function () {
 		var mph = this.state.mph;
-		var hundreds = "mph__number mph__number";
-		var tens = "mph__number mph__number";
-		var ones = "mph__number mph__number";
-		if (mph > 100){
-			hundreds += "--" + (mph + "")[0]
-			tens += "--" + (mph + "")[1]
-			ones += "--" + (mph % 10)
-		} else if (mph > 9){
-			tens += "--" + (mph + "")[0]
-			ones += "--" + (mph % 10)
-		} else {
-			ones += "--" + (mph % 10)
-		}
 		return (
 			<div className="mph__container">
-				<div className="mph--background"><span className='mph__number--default'></span><span className='mph__number--default'></span><span className='mph__number--default'></span></div>
-				<div className="mph"><span className={hundreds}></span><span className={tens}></span><span className={ones}></span></div>
+				<div className="mph"><span>{mph}</span></div>
 				<p className="mph__label">MPH</p>
 			</div>
 		);
 	},
 	renderSmallNumbers: function (number) {
 		var rpm = number;
-		var thousands = "small-number small-number";
-		var hundreds = "small-number small-number";
-		var tens = "small-number small-number";
-		var ones = "small-number small-number";
-		var commaClass = rpm > 999 ? "small-number--comma" : "small-number--hidden-comma"
-		if (rpm > 999){
-			thousands += "--" + (rpm + "")[0]
-			hundreds += "--" + (rpm + "")[1]
-			tens += "--" + (rpm + "")[2]
-			ones += "--" + (rpm + "")[3]
-		} else if (rpm > 99){
-			thousands += "--default"
-			hundreds += "--" + (rpm + "")[0]
-			tens += "--" + (rpm + "")[1]
-			ones += "--" + (rpm % 10)
-		} else if (rpm > 9){
-			thousands += "--default"
-			hundreds += "--default"
-			tens += "--" + (rpm + "")[0]
-			ones += "--" + (rpm % 10)
-		} else {
-			thousands += "--default"
-			hundreds += "--default"
-			tens += "--default"
-			ones += "--" + (rpm % 10)
-		}
 		return (
 			<div className="rpm-num__container">
-				<div className="rpm"><span className={thousands}></span><span className={commaClass}><img className='comma-image' src='./comma.svg' /></span><span className={hundreds}></span><span className={tens}></span><span className={ones}></span></div>
-				<div className="rpm--background"><span className='small-number--default'></span><span className='small-number--default'></span><span className='small-number--default'></span><span className='small-number--default'></span></div>
+				<div className="rpm"><span>{rpm}</span></div>
+				
 			</div>
 		);
 	},
@@ -153,6 +116,7 @@ var Dash = React.createClass({
 				<div className={rpmClasses}>
 					{ this.rpmMarkers() }
 					{ this.renderMPH() }
+					{ this.renderGauge() }
 				</div>
 				<div className="small-num__container">
 						{ this.renderSmallNumbers(this.state.rpm) }
@@ -220,7 +184,8 @@ var Dash = React.createClass({
 					<a className="drawer-toggle drawer-toggle--open" onClick={this.toggleDrawer}><img className='dash-icon' src='./dashIcon.svg'/></a>
 					<a className="drawer-toggle drawer-toggle--close" onClick={this.toggleDrawer}><img className='close-icon' src='./close.svg'/></a>
 					<a className="dash-button" onClick={() => this.chooseDashCloseDrawer('defaultDash')}>Default Dash</a>
-					<a className="dash-button" onClick={() => this.chooseDashCloseDrawer('numbersDash')}>Numbers Dash</a>
+					<a className="dash-button" onClick={() => this.chooseDashCloseDrawer('numbersDash')}>Race Dash</a>
+					<a className="dash-button" onClick={() => this.chooseDashCloseDrawer('numbersDash')}>Derp Mode</a>
 				</div>}
 			</div>
 		);

@@ -11,7 +11,7 @@ if (process.env.NODE_ENV != "development"){
 }
 
 // All the values we are getting from the ECU
-var rpm, mph, coolantTemp = 0;
+var rpm, mph, coolantTemp, chargeTemp, chargePressure, oilTemp, oilPressure, engineLoad, afr, voltage = 0;
 
 var currentData= [];
 var frameStarted = false;
@@ -126,22 +126,70 @@ io.on('connection', function (socket) {
       // Change values so you can see it go up when developing
       if (process.env.NODE_ENV === "development"){
         if(rpm < 7200){
-          rpm += 11
+          rpm += 10
         } else{
           rpm = 0
         }
-        if(mph < 120){
-          mph += 1
+        if(mph < 200){
+          mph += 0.2
         } else{
           mph = 0
         }
+        if(oilTemp < 210){
+          oilTemp += 0.5
+        } else{
+          oilTemp = 0
+        }
+        if(oilPressure < 60){
+          oilPressure += 0.5
+        } else{
+          oilPressure = 0
+        }
         if(coolantTemp < 210){
-          coolantTemp += 1
+          coolantTemp += 0.5
         } else{
           coolantTemp = 0
         }
+        if(chargeTemp < 210){
+          chargeTemp += 0.5
+        } else{
+          chargeTemp = 0
+        }
+        if(chargePressure < 60){
+          chargePressure += 0.5
+        } else{
+          chargePressure = 0
+        }
+        if(voltage < 15){
+          voltage += 0.2
+        } else{
+          voltage = 0
+        }
+        if(afr < 30){
+          afr += 0.5
+        } else{
+          afr = 0
+        }
+        if(engineLoad <= 100){
+          engineLoad += 0.2
+        } else{
+          engineLoad = 0
+        }
+
+
       }
 
-      socket.emit('ecuData', {'rpm':Math.floor(rpm),'mph':Math.floor(mph),'coolantTemp':Math.floor(coolantTemp)});
+      socket.emit('ecuData', {
+        'rpm':Math.floor(rpm),
+        'mph':Math.floor(mph),
+        'coolantTemp':Math.floor(coolantTemp),
+        'chargeTemp':Math.floor(chargeTemp),
+        'oilTemp':Math.floor(chargeTemp),
+        'chargePressure':Math.floor(chargePressure),
+        'oilPressure':Math.floor(oilPressure),
+        'engineLoad':Math.floor(engineLoad),
+        'voltage':voltage,
+        'afr':afr,
+      });
     }, 100);
 });
